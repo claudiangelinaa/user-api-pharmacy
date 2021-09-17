@@ -5,7 +5,10 @@ exports.register = (data) =>{
         var sql = `insert into users set ? ; select * from users where email='${data.email}' and password='${data.password}'`
         pool.query(sql, [data], (err,result)=>{
             console.log(result);
-            if(err) reject(err)
+            if(err) {
+                console.log(err)
+                reject(err)
+            }
             resolve(result)
         })
     })
