@@ -12,6 +12,6 @@ router.post('/users/login', authController.login)
 router.get('/users/check-token', authController.checkToken)
 router.get('/users', userController.selectAll)
 router.get('/users/:id', userController.selectByParams)
-
+router.post('/users/:id', userController.update)
 
 module.exports = router;
