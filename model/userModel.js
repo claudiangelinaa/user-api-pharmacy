@@ -21,3 +21,14 @@ exports.selectByParams = (data) =>{
         })
     })
 }
+
+exports.update = (data) =>{
+    return new Promise(function(resolve,reject){
+        var sql = `UPDATE users SET? WHERE ID= ${data.id}`
+        pool.query(sql, [data], (err,result)=>{
+            console.log(err,result);
+            if(err) reject(err)
+            resolve(result)
+        })
+    })
+}
