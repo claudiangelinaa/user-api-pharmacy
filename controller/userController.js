@@ -1,5 +1,8 @@
 const userModel = require('../model/userModel')
-// const jwt = require('../lib/jwt')
+const multer = require('../lib/multer')
+const jwt = require('../lib/jwt')
+const image = require('../helper/image')
+const { login } = require('../model/authModel')
 
 exports.selectAll = async(req,res) =>{
     userModel.selectAll()
@@ -60,5 +63,45 @@ exports.update = async(req,res) =>{
             message: 'failed to update data',
             error_message: err
         })
+    })
+}
+
+exports.uploadProfilePicture = async(req,res) =>{
+    let loginData = jwt.Decode(req.headers.authorization)
+    let fileName = image.generateImageFileName('UIMG')
+
+    let uploadData = {
+        id: loginData.id,
+        filePath: `/user-profile/${loginData.id}`,
+        fileName: fileName
+    }
+    let upload = multer.uploadImage(uploadData.filePath, fileName)
+
+    upload(req,res, (err) =>{
+        try{
+            if(err) throw err
+
+            console.log("uploadData:", uploadData)
+            userModel.updateProfilePicture(uploadData)
+            .then((result)=>{
+                res.json({
+                    status: "OK",
+                    message: 'Upload successful'
+                })
+            })
+            .catch(err=>{
+                res.json({
+                    status: 'error',
+                    message: 'failed to upload profile picture',
+                    error_message: err
+                })
+            })
+        } catch (err) {
+            res.status(500).json({
+                status: 'error',
+                message: 'failed to upload',
+                error_message: err
+            })
+        }
     })
 }
