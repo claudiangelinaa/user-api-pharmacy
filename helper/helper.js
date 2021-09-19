@@ -7,3 +7,7 @@ exports.validatePassword = (password) =>{
     const re = /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$/;
     return re.test(String(password));
 }
+
+exports.tokenPasser = (token) =>{
+    return token
+}
