@@ -47,7 +47,9 @@ exports.register = async(req,res) =>{
         let token = jwt.Encode(tokenData)
         res.json({
             id: result[1][0].id,
+            nama: result[1][0].nama,
             email: result[1][0].email,
+            role: result[1][0].role,
             token
         })
     })
