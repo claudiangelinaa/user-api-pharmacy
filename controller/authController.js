@@ -44,10 +44,10 @@ exports.register = async (req, res) => {
   authModel
     .register(data)
     .then((result) => {
-      console.log(result);
       let tokenData = {
         id: result[1][0].id,
         role: result[1][0].role,
+        nama: result[1][0].nama,
       };
       let token = jwt.Encode(tokenData);
       res.json({
@@ -66,33 +66,46 @@ exports.register = async (req, res) => {
 };
 
 exports.login = async (req, res) => {
-  let data = {
-    email: req.body.email,
-    password: bcrypt.Encrypt(req.body.password),
-  };
-  // console.log(data);
-  authModel
-    .login(data)
-    .then((result) => {
-      let tokenData = {
-        id: result[0].id,
-        role: result[0].role,
-      };
-      let token = jwt.Encode(tokenData);
-      res.json({
-        id: result[0].id,
-        email: result[0].email,
-        role: result[0].role,
-        token,
+  // const { email } = req.body;
+
+  // const getVerifikasi = `SELECT verifikasi FROM users WHERE email='${email}'`;
+
+  // pool.query(getVerifikasi, (err, result) => {
+  //   if (err) {
+  //     res.status(400).send({ message: err });
+  //   }
+
+  //   const verifikasi = result
+
+    let data = {
+      email: req.body.email,
+      password: bcrypt.Encrypt(req.body.password),
+      verifikasi: result,
+    };
+
+    authModel
+      .login(data)
+      .then((result) => {
+        console.log(data)
+        let tokenData = {
+          id: result[0].id,
+          role: result[0].role,
+        };
+        let token = jwt.Encode(tokenData);
+        res.json({
+          id: result[0].id,
+          email: result[0].email,
+          role: result[0].role,
+          token,
+        });
+      })
+      .catch((err) => {
+        res.json({
+          status: err,
+          message: err,
+        });
       });
-    })
-    .catch((err) => {
-      // console.log('err', err)
-      res.json({
-        status: "error",
-        message: "failed to login",
-      });
-    });
+  // });
 };
 
 exports.forgotPassword = async (req, res) => {
@@ -165,7 +178,7 @@ exports.forgotPassword = async (req, res) => {
 
 exports.resetPassword = async (req, res) => {
   const { token, password, confirmPassword } = req.body;
-  
+
   if (!token) {
     res.status(404).send({ message: "Token Not found" });
     return;
@@ -213,38 +226,3 @@ exports.resetPassword = async (req, res) => {
       });
     });
 };
-
-// const link = `${platform.port}/reset-password/${tokenData.id}/${token}`;
-// const token = jwt.Encodes(tokenData);
-// const mailData = {
-//   from: "noreply@authmail.com",
-//   to: email,
-//   subject: "Account Activation Link",
-//   html: `
-//             <h2>Please click on given link to reset ypur password </h2>
-//             <p>${jwt.Encode(platform.port)}/reset-password/${token}</p>
-//       `,
-// };
-// const link = `${platform.port}/reset-password/${tokenData.id}/${token}`;
-
-//   authModel
-//     .forgotPassword(data)
-//     .then((result) => {
-//       let tokenData = {
-//         id: result[0].id,
-//         email: result[0].email,
-//       };
-
-//       let token = jwt.Encodes(tokenData);
-//       res.json({
-//         id: result[0].id,
-//         email: result[0].email,
-//         token,
-//       });
-//     })
-//     .catch((err) => {
-//       res.json({
-//         status: "error",
-//         message: err,
-//       });
-//     })

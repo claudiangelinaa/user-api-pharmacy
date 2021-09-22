@@ -3,6 +3,7 @@ const router = express.Router();
 
 const obatJadiController = require("./controller/obatJadiController");
 const authController = require("./controller/authController");
+const transactionController = require("./controller/transactionController");
 
 router.get("/obatjadi", obatJadiController.selectAll);
 router.get("/obatjadi/:id", obatJadiController.selectByParams);
@@ -10,5 +11,8 @@ router.post("/users/register", authController.register);
 router.post("/users/login", authController.login);
 router.post("/users/forgot-password", authController.forgotPassword);
 router.put("/users/reset-password", authController.resetPassword);
+
+router.get("/getTransaction/:id", transactionController.selectTransactionByUser);
+router.post("/insertTransaction", transactionController.insertTransaction);
 
 module.exports = router;
