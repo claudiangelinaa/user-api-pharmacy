@@ -1,4 +1,5 @@
 const express = require("express");
+// const multerLib = require('./lib/multer')
 const router = express.Router();
 // const multerLib = require('./lib/multer')
 const obatJadiController = require("./controller/obatJadiController");
@@ -8,6 +9,13 @@ const userController = require('./controller/userController')
 
 router.get("/obatjadi", obatJadiController.selectAll);
 router.get("/obatjadi/:id", obatJadiController.selectByParams);
+
+
+router.get('/users/check-token', authController.checkToken)
+router.get('/users', userController.selectAll)
+router.get('/users/:id', userController.selectByParams)
+router.post('/users/profile-picture', userController.uploadProfilePicture)
+router.post('/users/:id', userController.update)
 router.post("/users/register", authController.register);
 router.post("/users/login", authController.login);
 router.post("/users/forgot-password", authController.forgotPassword);

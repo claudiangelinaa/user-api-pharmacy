@@ -56,6 +56,7 @@ exports.insertTransaction = async (req, res) => {
   pool.query(
     insertTransaksi,
     (err, result) => {
+
       try {
         if (err) {
           throw err;
@@ -66,26 +67,27 @@ exports.insertTransaction = async (req, res) => {
         return;
       }
 
+      const id = result.insertId;
+
+      for (let i = 0; i < obat_jadi_id.length; i++) {
+        const insertObat = `INSERT INTO transaksi_obat_jadi (obat_jadi_id, transaksi_id, quantity) VALUES (${obat_jadi_id[i]},${id},${quantity[i]})`;
+        pool.query(insertObat, (err, result) => {
+          if (err) {
+            res.status(400).send({ message: err });
+            return;
+          }
+
+          // res.status(200).send({ message: "Insert Successful" });
+        });
+      }
+
       res.status(200).send({ message: "Transaction Successfully Processed" });
 
-      pool.query(showTransaksi, (err, result) => {
-        if (err) {
-          res.status(400).send({ message: err });
-        }
-        const id = result[0].id;
-
-        for (let i = 0; i < obat_jadi_id.length; i++) {
-          const insertObat = `INSERT INTO transaksi_obat_jadi (obat_jadi_id, transaksi_id, quantity) VALUES (${obat_jadi_id[i]},${id},${quantity[i]})`;
-          pool.query(insertObat, (err, result) => {
-            if (err) {
-              res.status(400).send({ message: err });
-              return;
-            }
-
-            // res.status(200).send({ message: "Insert Successful" });
-          });
-        }
-      });
+      // pool.query(showTransaksi, (err, result) => {
+      //   if (err) {
+      //     res.status(400).send({ message: err });
+      //   }
+      // });
     }
     catch (err) {
       console.log(err);

@@ -239,6 +239,12 @@ exports.resetPassword = async (req, res) => {
       });
     });
 };
+
+// exports.checkToken = async(req,res) =>{
+//   console.log(req.headers)
+//   let loginData = jwt.Decode(req.headers.authorization)
+
+//   res.json(loginData)
     // console.log(data);
 //     authModel.login(data)
 //     .then((result)=>{
