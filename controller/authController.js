@@ -47,8 +47,8 @@ exports.register = async (req, res) => {
     // }
 
   if (!helper.validatePassword(req.body.password)) {
-    res.json({
-      message: "Password harus mengandung angka dan special character",
+    res.status(400).json({
+      error_message: "Password harus mengandung angka dan special character",
     });
     return;
   }
@@ -65,11 +65,13 @@ exports.register = async (req, res) => {
       res.json({
         id: result[1][0].id,
         email: result[1][0].email,
+        nama: result[1][0].nama,
+        role: result[1][0].role,
         token,
       });
     })
     .catch((err) => {
-      res.json({
+      res.status(500).json({
         status: "error",
         message: "Failed to register user",
         error_message: err,
@@ -92,7 +94,7 @@ exports.login = async (req, res) => {
     let data = {
       email: req.body.email,
       password: bcrypt.Encrypt(req.body.password),
-      verifikasi: result,
+    //   verifikasi: result,
     };
 
     authModel
@@ -102,13 +104,15 @@ exports.login = async (req, res) => {
         let tokenData = {
           id: result[0].id,
           role: result[0].role,
+          nama: result[0].nama,
+          email: result[0].email,
         };
         let token = jwt.Encode(tokenData);
         res.json({
-            id: result[1][0].id,
-            nama: result[1][0].nama,
-            email: result[1][0].email,
-            role: result[1][0].role,
+            id: result[0].id,
+            nama: result[0].nama,
+            email: result[0].email,
+            role: result[0].role,
             token
         })
     })
@@ -272,8 +276,8 @@ exports.resetPassword = async (req, res) => {
 //     })
 
 exports.checkToken = async(req,res) =>{
-    console.log(req.headers)
+    // console.log(req.headers)
     let loginData = jwt.Decode(req.headers.authorization)
-
+    // console.log(loginData)
     res.json(loginData)
 }
