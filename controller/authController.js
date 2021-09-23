@@ -6,6 +6,10 @@ const helper = require("../helper/helper");
 const pool = require("../config/db");
 const platform = require("../platform");
 require("dotenv").config();
+// const authModel = require('../model/authModel');
+// const bcrypt = require('../lib/bcrypt');
+// const jwt = require('../lib/jwt')
+// const helper = require('../helper/helper')
 
 exports.register = async (req, res) => {
   let data = {
@@ -20,19 +24,27 @@ exports.register = async (req, res) => {
     role: req.body.role,
   };
 
-  if (!helper.validateEmail(data.email)) {
-    res.json({
-      message: "Format email tidak sesuai",
-    });
-    return;
-  }
+// <<<<<<< feature/transaction
+//   if (!helper.validateEmail(data.email)) {
+//     res.json({
+//       message: "Format email tidak sesuai",
+//     });
+//     return;
+//   }
 
-  if (req.body.password.length < 6) {
-    res.json({
-      message: "Password minimal 6 karakter",
-    });
-    return;
-  }
+//   if (req.body.password.length < 6) {
+//     res.json({
+//       message: "Password minimal 6 karakter",
+//     });
+//     return;
+//   }
+// =======
+    // if(!helper.validatePassword(req.body.password)){
+    //     res.json({
+    //         message: 'Password harus mengandung angka dan special character'
+    //     })
+    //     return
+    // }
 
   if (!helper.validatePassword(req.body.password)) {
     res.json({
@@ -93,13 +105,14 @@ exports.login = async (req, res) => {
         };
         let token = jwt.Encode(tokenData);
         res.json({
-          id: result[0].id,
-          email: result[0].email,
-          role: result[0].role,
-          token,
-        });
-      })
-      .catch((err) => {
+            id: result[1][0].id,
+            nama: result[1][0].nama,
+            email: result[1][0].email,
+            role: result[1][0].role,
+            token
+        })
+    })
+    .catch(err=>{
         res.json({
           status: err,
           message: err,
@@ -140,7 +153,7 @@ exports.forgotPassword = async (req, res) => {
         .status(400)
         .json({ error: "User with this email does not exists" });
     }
-
+    
     let transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -227,9 +240,40 @@ exports.resetPassword = async (req, res) => {
     });
 };
 
-exports.checkToken = async(req,res) =>{
-  console.log(req.headers)
-  let loginData = jwt.Decode(req.headers.authorization)
+// exports.checkToken = async(req,res) =>{
+//   console.log(req.headers)
+//   let loginData = jwt.Decode(req.headers.authorization)
 
-  res.json(loginData)
+//   res.json(loginData)
+    // console.log(data);
+//     authModel.login(data)
+//     .then((result)=>{
+//         let tokenData ={
+//             id: result[0].id,
+//             role: result[0].role,
+//             nama: result[0].nama
+//         }
+//             let token = jwt.Encode(tokenData)
+//             res.json({
+//                 id: result[0].id,
+//                 nama: result[0].nama,
+//                 email: result[0].email,
+//                 role: result[0].role,
+//                 token
+//             })
+//         })
+//     .catch(err=>{
+//         // console.log('err', err)
+//         res.json({
+//             status: 'error',
+//             message: 'failed to login',
+//             error_message: err
+//         })
+//     })
+
+exports.checkToken = async(req,res) =>{
+    console.log(req.headers)
+    let loginData = jwt.Decode(req.headers.authorization)
+
+    res.json(loginData)
 }
