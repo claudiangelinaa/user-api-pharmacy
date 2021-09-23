@@ -6,24 +6,10 @@ const helper = require("../helper/helper");
 const pool = require("../config/db");
 const platform = require("../platform");
 require("dotenv").config();
-=======
 // const authModel = require('../model/authModel');
 // const bcrypt = require('../lib/bcrypt');
 // const jwt = require('../lib/jwt')
 // const helper = require('../helper/helper')
-
-exports.register = async(req,res) =>{
-    let data ={
-        nama: req.body.nama,
-        email: req.body.email,
-        password: bcrypt.Encrypt(req.body.password),
-        alamat: req.body.alamat,
-        nomor_telepon : req.body.nomor_telepon,
-        umur: req.body.umur,
-        gender: req.body.gender,
-        profile_picture: req.body.profile_picture,
-        // role: req.body.role        
-    }
 
 exports.register = async (req, res) => {
   let data = {
@@ -278,7 +264,6 @@ exports.resetPassword = async (req, res) => {
 //             error_message: err
 //         })
 //     })
-}
 
 exports.checkToken = async(req,res) =>{
     console.log(req.headers)
