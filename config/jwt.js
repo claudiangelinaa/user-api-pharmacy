@@ -1,1 +1,1 @@
-exports.secretKey = 'randomstringghjkghjklkjhg'
+exports.secretKey = "randomstringghjkghjklkjhg";
