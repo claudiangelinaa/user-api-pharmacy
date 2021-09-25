@@ -3,6 +3,7 @@ const multer = require('../lib/multer')
 const jwt = require('../lib/jwt')
 const image = require('../helper/image')
 const { login } = require('../model/authModel')
+const platform = require("../platform");
 
 exports.selectAll = async(req,res) =>{
     userModel.selectAll()
@@ -73,7 +74,8 @@ exports.uploadProfilePicture = async(req,res) =>{
     let uploadData = {
         id: loginData.id,
         filePath: `/user-profile/${loginData.id}`,
-        fileName: fileName
+        fileName: fileName,
+        fullImgUrl: `http://${platform.baseURL}:${platform.port}/images/user-profile/${loginData.id}/${fileName}`
     }
     let upload = multer.uploadImage(uploadData.filePath, fileName)
 
@@ -86,7 +88,8 @@ exports.uploadProfilePicture = async(req,res) =>{
             .then((result)=>{
                 res.json({
                     status: "OK",
-                    message: 'Upload successful'
+                    message: 'Upload successful',
+                    image_url: uploadData.fullImgUrl,
                 })
             })
             .catch(err=>{

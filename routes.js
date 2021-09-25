@@ -31,6 +31,8 @@ router.post('/users/:id', userController.update)
 router.get("/getTransaction/:id", transactionController.selectTransactionByUser);
 router.post("/insertTransaction", transactionController.insertTransaction);
 
+router.use("/images", express.static("images"))
+
 // router.post('/test-upload', (req, res) => {
 //   let upload = multerLib.uploadImage("", 'asdasd')
 
