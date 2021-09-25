@@ -49,12 +49,12 @@ exports.login = (data) => {
   
 };
 
-exports.resetPassword = (data) => {
-  return new Promise(function (resolve, reject) {
-    var sql = `update users set password = '${data.password}' where id='${data.id}'`;
-    pool.query(sql, [data], (err, result) => {
-      if (err) reject(err);
-      resolve(result);
-    });
-  });
-};
+// exports.resetPassword = (data) => {
+//   return new Promise(function (resolve, reject) {
+//     var sql = `update users set password = '${data.password}' where id='${data.id}'`;
+//     pool.query(sql, [data], (err, result) => {
+//       if (err) reject(err);
+//       resolve(result);
+//     });
+//   });
+// };

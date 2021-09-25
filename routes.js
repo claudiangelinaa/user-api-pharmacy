@@ -18,7 +18,9 @@ router.post('/users/profile-picture', userController.uploadProfilePicture)
 router.post("/users/register", authController.register);
 router.post("/users/login", authController.login);
 router.post("/users/forgot-password", authController.forgotPassword);
-router.put("/users/reset-password", authController.resetPassword);
+router.post("/users/reset-password", authController.resetPassword);
+router.post("/users/verify-account", authController.verifyAccount);
+router.post("/users/verification", authController.verification);
 router.post('/users/:id', userController.update)
 
 router.get('/users/check-token', authController.checkToken)
