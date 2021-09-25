@@ -141,17 +141,11 @@ exports.login = async (req, res) => {
           });
         })
         .catch((err) => {
-          res.json({
-            status: err,
-            message: err,
+          console.log(err)
+          res.status(500).json({
+            status: "error",
+            error_message: "email/password salah",
           });
-// =======
-    })
-//     .catch(err=>{
-//         res.status(500).json({
-//           status: err,
-//           message: err,
-// >>>>>>> development
         });
     });
   });
