@@ -145,6 +145,13 @@ exports.login = async (req, res) => {
             status: err,
             message: err,
           });
+// =======
+    })
+//     .catch(err=>{
+//         res.status(500).json({
+//           status: err,
+//           message: err,
+// >>>>>>> development
         });
     });
   });
