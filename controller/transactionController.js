@@ -1,5 +1,10 @@
 const pool = require("../config/db");
 const obatJadiModel = require("../model/obatJadiModel");
+const platform = require("../platform");
+const jwt = require('../lib/jwt')
+const image = require('../helper/image')
+const multer = require('../lib/multer')
+const transactionModel = require("../model/transactionModel");
 
 // exports.selectAllTransaction = async(req,res) =>{
 //     transactionModel.selectAll()
@@ -94,3 +99,54 @@ exports.insertTransaction = async (req, res) => {
     }}
   );
 };
+
+exports.insertObatRacikTransaction = async (req, res) => {
+  let loginData = jwt.Decode(req.headers.authorization)
+  
+  let fileName = image.generateImageFileName('RECEIPT_IMG')
+  let filePath = `/receipt/${loginData.id}`
+  
+  let uploadData = {
+    id: loginData.id,
+    filePath: filePath,
+    fileName: fileName,
+    fullImgUrl: `http://${platform.baseURL}:${platform.port}/images${filePath}/${fileName}`,
+  }
+  console.log("obatraciktx:", uploadData)
+
+  let upload = multer.uploadImage(uploadData.filePath, fileName)
+  upload(req,res, (err) =>{
+    try{
+      if(err) throw err
+
+      transactionModel.insertObatRacikTransaction({
+        user_id: uploadData.id,
+        alamat: req.body.alamat,
+        resep_image: uploadData.fullImgUrl
+      })
+      .then((result) => {
+        console.log(result.data)
+        res.json({
+          status: "OK",
+          message: 'Upload successful',
+          image_url: uploadData.fullImgUrl,
+        })
+      })
+      .catch((err) => {
+        console.log(err)
+        res.status(500).json({
+          status: 'error',
+          message: 'failed to insert to db',
+          error_message: err
+        })
+      })
+
+    } catch(err) {
+      res.status(500).json({
+        status: 'error',
+        message: 'failed to upload',
+        error_message: err
+      })
+    }
+  })
+}
