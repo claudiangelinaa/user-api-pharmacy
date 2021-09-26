@@ -31,6 +31,7 @@ router.post('/users/:id', userController.update)
 router.get("/getTransaction/:id", transactionController.selectTransactionByUser);
 router.post("/insertTransaction", transactionController.insertTransaction);
 router.post("/insertObatRacikTransaction", transactionController.insertObatRacikTransaction);
+router.post("/UploadBuktiBayar/:transactionId", transactionController.uploadBuktiBayar);
 
 router.use("/images", express.static("images"))
 

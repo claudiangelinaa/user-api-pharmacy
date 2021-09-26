@@ -150,3 +150,52 @@ exports.insertObatRacikTransaction = async (req, res) => {
     }
   })
 }
+
+exports.uploadBuktiBayar = async (req, res) => {
+  const loginData = jwt.Decode(req.headers.authorization)
+
+  let fileName = image.generateImageFileName('PAYMENT_IMG')
+  let filePath = `/payment/${loginData.id}/${req.params.transactionId}`
+  
+  let uploadData = {
+    id: loginData.id,
+    filePath: filePath,
+    fileName: fileName,
+    fullImgUrl: `http://${platform.baseURL}:${platform.port}/images${filePath}/${fileName}`,
+    transactionId: req.params.transactionId
+  }
+
+  console.log(uploadData)
+
+  let upload = multer.uploadImage(uploadData.filePath, fileName)
+  upload(req,res, (err) =>{
+    try{
+      if(err) throw err
+
+      transactionModel.updateBuktiBayar(uploadData)
+      .then((result) => {
+        console.log(result.data)
+        res.json({
+          status: "OK",
+          message: 'Upload successful',
+          image_url: uploadData.fullImgUrl,
+        })
+      })
+      .catch((err) => {
+        console.log(err)
+        res.status(500).json({
+          status: 'error',
+          message: 'failed to insert to db',
+          error_message: err
+        })
+      })
+
+    } catch(err) {
+      res.status(500).json({
+        status: 'error',
+        message: 'failed to upload',
+        error_message: err
+      })
+    }
+  })
+}
