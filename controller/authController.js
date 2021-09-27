@@ -16,8 +16,7 @@ exports.register = async (req, res) => {
     nomor_telepon: req.body.nomor_telepon,
     umur: req.body.umur,
     gender: req.body.gender,
-    profile_picture: req.body.profile_picture,
-    role: req.body.role,
+    profile_picture: req.body.profile_picture
   };
 
   // <<<<<<< feature/transaction
@@ -83,7 +82,7 @@ exports.login = async (req, res) => {
 
   pool.query(getEmail, (err, result) => {
     if (err) {
-      alert(err);
+      console.log(err);
     }
 
     console.log(result);
