@@ -54,7 +54,7 @@ exports.selectTransactionByUser = async (req, res) => {
 exports.insertTransaction = async (req, res) => {
   const { total, alamat, user_id, quantity, obat_jadi_id } = req.body;
 
-  const insertTransaksi = `INSERT INTO transaksi (total, alamat, user_id) VALUES (${total},'${alamat}',${user_id})`;
+  const insertTransaksi = `INSERT INTO transaksi (total, alamat, user_id, status) VALUES (${total},'${alamat}',${user_id}, 3)`;
 
   const showTransaksi = `SELECT id from transaksi where user_id=${user_id} order by user_id LIMIT 1 `;
 
@@ -198,4 +198,56 @@ exports.uploadBuktiBayar = async (req, res) => {
       })
     }
   })
+}
+
+exports.selectAllRacikTransaction = async (req, res) => {
+  const selectAllRacikTransactionQuery = `SELECT
+  transaksi.id,
+  users.nama,
+  transaksi.tanggal,
+  transaksi.status,
+  transaksi.resep_image
+    FROM transaksi 
+      JOIN users
+        ON transaksi.user_id = users.id 
+              WHERE transaksi.resep_image IS NOT NULL AND users.id = ${req.params.id}`
+
+  pool.query(selectAllRacikTransactionQuery, (err, result1) => {
+    if (err) {
+      res.status(400).send({ message: err });
+    } else if(result1) {
+      let response = {
+        data: []
+      }
+      
+      result1.map(ele => {
+        // console.log(ele)
+        const selectTransactionByIdQuery = `SELECT bahan_baku.nama, transaksi_obat_racik.komposisi_qty, bahan_baku.satuan_komposisi
+        FROM transaksi_obat_racik 
+        JOIN transaksi ON transaksi.id = transaksi_obat_racik.transaksi_id
+        JOIN bahan_baku ON bahan_baku.id = transaksi_obat_racik.bahan_baku_id
+        WHERE transaksi.id = ${ele.id}`
+
+        pool.query(selectTransactionByIdQuery, (err, result) => {
+          if (err) {
+            res.status(400).send({ message: err });
+          } else if(result) {
+            // console.log(ele.id, result)
+            let newTransactionObj = {
+              ...ele,
+              bahan_baku: result
+            }
+            console.log(newTransactionObj)
+
+            response.data.push(newTransactionObj)
+            console.log(response.data)
+
+            if(response.data.length === result1.length) {
+              res.status(200).send({ data: response.data });
+            }
+          }
+        })
+      })
+    }
+  });
 }
