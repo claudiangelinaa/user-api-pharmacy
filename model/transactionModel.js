@@ -16,7 +16,7 @@ exports.insertObatRacikTransaction = (data) =>{
 
 exports.updateBuktiBayar = (data) =>{
   return new Promise(function(resolve,reject){
-    var sql = `UPDATE transaksi SET bukti_bayar_image = ?, status = '1' WHERE ID=${data.transactionId}`
+    var sql = `UPDATE transaksi SET bukti_bayar_image = ?, status = 4 WHERE ID=${data.transactionId}`
     pool.query(sql, data.fullImgUrl, (err, result)=>{
       console.log(err,result)
       if(err) reject(err)
