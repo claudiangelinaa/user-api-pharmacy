@@ -369,6 +369,7 @@ exports.resetPassword = async (req, res) => {
   });
 };
 
+
 exports.checkToken = async (req, res) => {
   // console.log(req.headers)
   let loginData = jwt.Decode(req.headers.authorization);
