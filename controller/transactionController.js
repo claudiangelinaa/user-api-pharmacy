@@ -51,16 +51,11 @@ exports.insertTransaction = async (req, res) => {
 
   const insertTransaksi = `INSERT INTO transaksi (total, alamat, user_id) VALUES (${total},'${alamat}',${user_id})`;
 
-  const showTransaksi = `SELECT id from transaksi where user_id=${user_id} order by user_id LIMIT 1 `;
-
-  pool.query(
-    insertTransaksi,
-    (err, result) => {
-
-      try {
-        if (err) {
-          throw err;
-        }
+  pool.query(insertTransaksi, (err, result) => {
+    try {
+      if (err) {
+        throw err;
+      }
 
       if (err) {
         res.status(400).send({ message: "Transaction cannot be processed" });
@@ -71,26 +66,37 @@ exports.insertTransaction = async (req, res) => {
 
       for (let i = 0; i < obat_jadi_id.length; i++) {
         const insertObat = `INSERT INTO transaksi_obat_jadi (obat_jadi_id, transaksi_id, quantity) VALUES (${obat_jadi_id[i]},${id},${quantity[i]})`;
-        pool.query(insertObat, (err, result) => {
+        const showQuantity = `SELECT stock from obat_jadi where id=${obat_jadi_id[i]}`;
+
+        pool.query(showQuantity, (err, result) => {
           if (err) {
-            res.status(400).send({ message: err });
+            res.status(400).send(err);
             return;
           }
+          const data = result[0].stock;
 
-          // res.status(200).send({ message: "Insert Successful" });
+          const qty = data - quantity[i];
+
+          const updateQuantity = `UPDATE obat_jadi SET stock=${qty} WHERE id=${obat_jadi_id[i]}`;
+
+          pool.query(updateQuantity, (err, result) => {
+            if (err) {
+              res.status(400).send(err);
+              return;
+            }
+
+            pool.query(insertObat, (err, result) => {
+              if (err) {
+                res.status(400).send({ message: err });
+                return;
+              }
+            });
+          });
         });
       }
-
       res.status(200).send({ message: "Transaction Successfully Processed" });
-
-      // pool.query(showTransaksi, (err, result) => {
-      //   if (err) {
-      //     res.status(400).send({ message: err });
-      //   }
-      // });
-    }
-    catch (err) {
+    } catch (err) {
       console.log(err);
-    }}
-  );
+    }
+  });
 };
