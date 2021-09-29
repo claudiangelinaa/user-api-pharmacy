@@ -171,8 +171,6 @@ exports.uploadBuktiBayar = async (req, res) => {
     transactionId: req.params.transactionId,
   };
 
-  console.log(uploadData);
-
   let upload = multer.uploadImage(uploadData.filePath, fileName);
   upload(req, res, (err) => {
     try {
@@ -230,9 +228,9 @@ exports.selectAllRacikTransaction = async (req, res) => {
 
       result1.map((ele) => {
         // console.log(ele)
-        const selectTransactionByIdQuery = `SELECT bahan_baku.nama, transaksi_obat_racik.komposisi_quantity
+        const selectTransactionByIdQuery = `SELECT bahan_baku.nama, transaksi_obat_racik.komposisi_qty
         FROM transaksi 
-        JOIN transaksi_obat_racik ON transaksi.id = transaksi_obat_racik.transaksi_ids
+        JOIN transaksi_obat_racik ON transaksi.id = transaksi_obat_racik.transaksi_id
         JOIN bahan_baku ON bahan_baku.id = transaksi_obat_racik.bahan_baku_id
         WHERE transaksi.id = ${ele.id}`;
 
