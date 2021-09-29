@@ -211,6 +211,7 @@ exports.selectAllRacikTransaction = async (req, res) => {
   transaksi.id,
   users.nama,
   transaksi.tanggal,
+  transaksi.total,
   transaksi.status,
   transaksi.resep_image
     FROM transaksi 
@@ -228,7 +229,7 @@ exports.selectAllRacikTransaction = async (req, res) => {
       
       result1.map(ele => {
         // console.log(ele)
-        const selectTransactionByIdQuery = `SELECT bahan_baku.nama, transaksi_obat_racik.komposisi_qty, bahan_baku.satuan_komposisi
+        const selectTransactionByIdQuery = `SELECT bahan_baku.nama, transaksi_obat_racik.komposisi_qty
         FROM transaksi_obat_racik 
         JOIN transaksi ON transaksi.id = transaksi_obat_racik.transaksi_id
         JOIN bahan_baku ON bahan_baku.id = transaksi_obat_racik.bahan_baku_id
