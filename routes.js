@@ -8,8 +8,8 @@ const transactionController = require("./controller/transactionController");
 const userController = require('./controller/userController')
 
 router.get("/obatjadi", obatJadiController.selectAll);
+router.get("/obatjadi/category", obatJadiController.getCategory);
 router.get("/obatjadi/:id", obatJadiController.selectByParams);
-
 
 router.get('/users/check-token', authController.checkToken)
 router.get('/users', userController.selectAll)
