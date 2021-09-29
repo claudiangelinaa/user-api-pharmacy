@@ -16,7 +16,7 @@ exports.register = async (req, res) => {
     nomor_telepon: req.body.nomor_telepon,
     umur: req.body.umur,
     gender: req.body.gender,
-    profile_picture: req.body.profile_picture
+    profile_picture: req.body.profile_picture,
   };
 
   // <<<<<<< feature/transaction
@@ -83,9 +83,8 @@ exports.login = async (req, res) => {
   pool.query(getEmail, (err, result) => {
     if (err) {
       console.log(err);
+      return;
     }
-
-    console.log(result);
 
     if (result.length === 0) {
       res.json({
@@ -97,6 +96,7 @@ exports.login = async (req, res) => {
     pool.query(getVerifikasi, (err, result) => {
       if (err) {
         res.status(400).send({ message: err });
+        return;
       }
 
       const verifikasi = result[0].verifikasi;
@@ -124,6 +124,7 @@ exports.login = async (req, res) => {
       authModel
         .login(data)
         .then((result) => {
+          console.log(result);
           let tokenData = {
             id: result[0].id,
             role: result[0].role,
@@ -140,7 +141,7 @@ exports.login = async (req, res) => {
           });
         })
         .catch((err) => {
-          console.log(err)
+          console.log(err);
           res.status(500).json({
             status: "error",
             error_message: "email/password salah",
@@ -369,10 +370,10 @@ exports.resetPassword = async (req, res) => {
   });
 };
 
-
 exports.checkToken = async (req, res) => {
   // console.log(req.headers)
   let loginData = jwt.Decode(req.headers.authorization);
   // console.log(loginData)
   res.json(loginData);
+  return
 };

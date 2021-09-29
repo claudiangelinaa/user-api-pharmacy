@@ -1,9 +1,9 @@
 const pool = require("../config/db");
 const obatJadiModel = require("../model/obatJadiModel");
 const platform = require("../platform");
-const jwt = require('../lib/jwt')
-const image = require('../helper/image')
-const multer = require('../lib/multer')
+const jwt = require("../lib/jwt");
+const image = require("../helper/image");
+const multer = require("../lib/multer");
 const transactionModel = require("../model/transactionModel");
 
 // exports.selectAllTransaction = async(req,res) =>{
@@ -107,106 +107,107 @@ exports.insertTransaction = async (req, res) => {
 };
 
 exports.insertObatRacikTransaction = async (req, res) => {
-  let loginData = jwt.Decode(req.headers.authorization)
-  
-  let fileName = image.generateImageFileName('RECEIPT_IMG')
-  let filePath = `/receipt/${loginData.id}`
-  
+  let loginData = jwt.Decode(req.headers.authorization);
+
+  let fileName = image.generateImageFileName("RECEIPT_IMG");
+  let filePath = `/receipt/${loginData.id}`;
+
   let uploadData = {
     id: loginData.id,
     filePath: filePath,
     fileName: fileName,
     fullImgUrl: `http://${platform.baseURL}:${platform.port}/images${filePath}/${fileName}`,
-  }
-  console.log("obatraciktx:", uploadData)
+  };
+  console.log("obatraciktx:", uploadData);
 
-  let upload = multer.uploadImage(uploadData.filePath, fileName)
-  upload(req,res, (err) =>{
-    try{
-      if(err) throw err
+  let upload = multer.uploadImage(uploadData.filePath, fileName);
+  upload(req, res, (err) => {
+    try {
+      if (err) throw err;
 
-      transactionModel.insertObatRacikTransaction({
-        user_id: uploadData.id,
-        alamat: req.body.alamat,
-        resep_image: uploadData.fullImgUrl
-      })
-      .then((result) => {
-        console.log(result.data)
-        res.json({
-          status: "OK",
-          message: 'Upload successful',
-          image_url: uploadData.fullImgUrl,
+      transactionModel
+        .insertObatRacikTransaction({
+          user_id: uploadData.id,
+          alamat: req.body.alamat,
+          resep_image: uploadData.fullImgUrl,
         })
-      })
-      .catch((err) => {
-        console.log(err)
-        res.status(500).json({
-          status: 'error',
-          message: 'failed to insert to db',
-          error_message: err
+        .then((result) => {
+          console.log(result.data);
+          res.json({
+            status: "OK",
+            message: "Upload successful",
+            image_url: uploadData.fullImgUrl,
+          });
         })
-      })
-
-    } catch(err) {
+        .catch((err) => {
+          console.log(err);
+          res.status(500).json({
+            status: "error",
+            message: "failed to insert to db",
+            error_message: err,
+          });
+        });
+    } catch (err) {
       res.status(500).json({
-        status: 'error',
-        message: 'failed to upload',
-        error_message: err
-      })
+        status: "error",
+        message: "failed to upload",
+        error_message: err,
+      });
     }
-  })
-}
+  });
+};
 
 exports.uploadBuktiBayar = async (req, res) => {
-  const loginData = jwt.Decode(req.headers.authorization)
+  const loginData = jwt.Decode(req.headers.authorization);
 
-  let fileName = image.generateImageFileName('PAYMENT_IMG')
-  let filePath = `/payment/${loginData.id}/${req.params.transactionId}`
-  
+  let fileName = image.generateImageFileName("PAYMENT_IMG");
+  let filePath = `/payment/${loginData.id}/${req.params.transactionId}`;
+
   let uploadData = {
     id: loginData.id,
     filePath: filePath,
     fileName: fileName,
     fullImgUrl: `http://${platform.baseURL}:${platform.port}/images${filePath}/${fileName}`,
-    transactionId: req.params.transactionId
-  }
+    transactionId: req.params.transactionId,
+  };
 
-  console.log(uploadData)
+  console.log(uploadData);
 
-  let upload = multer.uploadImage(uploadData.filePath, fileName)
-  upload(req,res, (err) =>{
-    try{
-      if(err) throw err
+  let upload = multer.uploadImage(uploadData.filePath, fileName);
+  upload(req, res, (err) => {
+    try {
+      if (err) throw err;
 
-      transactionModel.updateBuktiBayar(uploadData)
-      .then((result) => {
-        console.log(result.data)
-        res.json({
-          status: "OK",
-          message: 'Upload successful',
-          image_url: uploadData.fullImgUrl,
+      transactionModel
+        .updateBuktiBayar(uploadData)
+        .then((result) => {
+          console.log(result.data);
+          res.json({
+            status: "OK",
+            message: "Upload successful",
+            image_url: uploadData.fullImgUrl,
+          });
         })
-      })
-      .catch((err) => {
-        console.log(err)
-        res.status(500).json({
-          status: 'error',
-          message: 'failed to insert to db',
-          error_message: err
-        })
-      })
-
-    } catch(err) {
+        .catch((err) => {
+          console.log(err);
+          res.status(500).json({
+            status: "error",
+            message: "failed to insert to db",
+            error_message: err,
+          });
+        });
+    } catch (err) {
       res.status(500).json({
-        status: 'error',
-        message: 'failed to upload',
-        error_message: err
-      })
+        status: "error",
+        message: "failed to upload",
+        error_message: err,
+      });
     }
-  })
-}
+  });
+};
 
 exports.selectAllRacikTransaction = async (req, res) => {
+  console.log(req.params.id);
   const selectAllRacikTransactionQuery = `SELECT
   transaksi.id,
   users.nama,
@@ -217,44 +218,44 @@ exports.selectAllRacikTransaction = async (req, res) => {
     FROM transaksi 
       JOIN users
         ON transaksi.user_id = users.id 
-              WHERE transaksi.resep_image IS NOT NULL AND users.id = ${req.params.id}`
+              WHERE transaksi.resep_image IS NOT NULL AND users.id = ${req.params.id}`;
 
   pool.query(selectAllRacikTransactionQuery, (err, result1) => {
     if (err) {
       res.status(400).send({ message: err });
-    } else if(result1) {
+    } else if (result1) {
       let response = {
-        data: []
-      }
-      
-      result1.map(ele => {
+        data: [],
+      };
+
+      result1.map((ele) => {
         // console.log(ele)
-        const selectTransactionByIdQuery = `SELECT bahan_baku.nama, transaksi_obat_racik.komposisi_qty
-        FROM transaksi_obat_racik 
-        JOIN transaksi ON transaksi.id = transaksi_obat_racik.transaksi_id
+        const selectTransactionByIdQuery = `SELECT bahan_baku.nama, transaksi_obat_racik.komposisi_quantity
+        FROM transaksi 
+        JOIN transaksi_obat_racik ON transaksi.id = transaksi_obat_racik.transaksi_ids
         JOIN bahan_baku ON bahan_baku.id = transaksi_obat_racik.bahan_baku_id
-        WHERE transaksi.id = ${ele.id}`
+        WHERE transaksi.id = ${ele.id}`;
 
         pool.query(selectTransactionByIdQuery, (err, result) => {
           if (err) {
             res.status(400).send({ message: err });
-          } else if(result) {
+          } else if (result) {
             // console.log(ele.id, result)
             let newTransactionObj = {
               ...ele,
-              bahan_baku: result
-            }
-            console.log(newTransactionObj)
+              bahan_baku: result,
+            };
+            console.log(newTransactionObj);
 
-            response.data.push(newTransactionObj)
-            console.log(response.data)
+            response.data.push(newTransactionObj);
+            console.log(response.data);
 
-            if(response.data.length === result1.length) {
+            if (response.data.length === result1.length) {
               res.status(200).send({ data: response.data });
             }
           }
-        })
-      })
+        });
+      });
     }
   });
-}
+};
