@@ -19,3 +19,13 @@ exports.selectByParams = (data) => {
     });
   });
 };
+
+exports.getCategory = (data) => {
+  return new Promise(function (resolve, reject) {
+    var sql = `SELECT DISTINCT KATEGORI FROM OBAT_JADI`;
+    pool.query(sql, [data], (err, result) => {
+      if (err) reject(err);
+      resolve(result);
+    });
+  });
+};
