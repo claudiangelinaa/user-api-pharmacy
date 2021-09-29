@@ -5,6 +5,7 @@ const nodemailer = require("nodemailer");
 const helper = require("../helper/helper");
 const pool = require("../config/db");
 const platform = require("../platform");
+const { response } = require("express");
 require("dotenv").config();
 
 exports.register = async (req, res) => {
@@ -19,20 +20,28 @@ exports.register = async (req, res) => {
     profile_picture: req.body.profile_picture
   };
 
-  // <<<<<<< feature/transaction
-  //   if (!helper.validateEmail(data.email)) {
-  //     res.json({
-  //       message: "Format email tidak sesuai",
-  //     });
-  //     return;
-  //   }
+  if(!data.nama || !data.email || !data.password || !data.alamat || !data.nomor_telepon || !data.umur || !data.gender) {
+    res.json({
+      status: "error",
+      errors: "Data tidak boleh kosong"
+    })
+  }
 
-  //   if (req.body.password.length < 6) {
-  //     res.json({
-  //       message: "Password minimal 6 karakter",
-  //     });
-  //     return;
-  //   }
+  if (!helper.validateEmail(data.email)) {
+    res.json({
+      status: "error",
+      errors: "Format email tidak sesuai",
+    });
+    return;
+  }
+
+  if (req.body.password.length < 6) {
+    res.json({
+      status: "error",
+      errors: "Password minimal 6 karakter",
+    });
+    return;
+  }
   // =======
   // if(!helper.validatePassword(req.body.password)){
   //     res.json({
@@ -41,12 +50,12 @@ exports.register = async (req, res) => {
   //     return
   // }
 
-  if (!helper.validatePassword(req.body.password)) {
-    res.status(400).json({
-      error_message: "Password harus mengandung angka dan special character",
-    });
-    return;
-  }
+  // if (!helper.validatePassword(req.body.password)) {
+  //   res.status(400).json({
+  //     error_message: "Password harus mengandung angka dan special character",
+  //   });
+  //   return;
+  // }
 
   authModel
     .register(data)
@@ -66,7 +75,7 @@ exports.register = async (req, res) => {
       });
     })
     .catch((err) => {
-      res.status(500).json({
+      res.json({
         status: "error",
         message: "Failed to register user",
         error_message: err,
@@ -141,9 +150,9 @@ exports.login = async (req, res) => {
         })
         .catch((err) => {
           console.log(err)
-          res.status(500).json({
+          res.json({
             status: "error",
-            error_message: "email/password salah",
+            errors: "email/password salah",
           });
         });
     });
